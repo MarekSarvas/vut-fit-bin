@@ -90,7 +90,7 @@ if __name__ == '__main__':
     if cuda:
         net1.cuda()
         net2.cuda()
-    trained = train(10, net2, cuda)
+    trained = train(3, net2, cuda)
     eval(trained, cuda)
 
 
