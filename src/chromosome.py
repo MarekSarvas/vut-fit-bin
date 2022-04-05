@@ -9,8 +9,11 @@ class Chromosome(nn.Module):
         self.value = chromosome_val
         self.S = stages # number of stages
         self.K = nodes  # number of convolution layers in each stage
+
+        self.fitness = 0
         
-        self.stages = self.create_stages()
+        self.cnn_stages = self.create_cnn_stages()
+        self.fc_stages = self.create_fc_stages()
         self.between_stage = nn.Sequential(
                 nn.MaxPool2d(kernel_size=2),
                 nn.ReLU(inplace=True)
@@ -22,7 +25,7 @@ class Chromosome(nn.Module):
 
     def forward(self, x):
         # TODO build connection logic here or in decode_chromosome() ? 
-        for stage, nodes in self.stages.items():
+        for stage, nodes in self.cnn_stages.items():
             print(stage)
             # TODO inter stage logic
             
@@ -40,7 +43,7 @@ class Chromosome(nn.Module):
         pass
 
 
-    def create_stages(self):
+    def create_cnn_stages(self):
         """ Create structure containing K nodes that will be connected
             according to the chromosome value.
         """
@@ -59,6 +62,17 @@ class Chromosome(nn.Module):
 
         return nn.ModuleDict(stage_dict) 
 
+    def create_fc_stages(self):
+        """ Create structure conatining S stages each with K_s nodes 
+            representing fully connected layers.
+        """
+        pass
+    
+    # TODO: maybe not neccessary if fitness function will be implemented.
+    def compute_fitness(self):
+        """ Computes its fitness.
+        """
+        pass
 
 if __name__=='__main__':
     model = Chromosome(3,4)
