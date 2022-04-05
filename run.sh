@@ -3,8 +3,8 @@
 . ./path.sh || exit 1;
 cd src/
 
-stage=1
-stop_stage=1
+stage=2
+stop_stage=2
 dumpdir=dump
 verbose=0
 
@@ -32,5 +32,11 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution I guess"
+    python3 evolution.py --generations 10 \
+                        --population_size 5 \
+                        --mutation_probability 0.01 \
+                        --cnn_stages 2 \
+                        --cnn_nodes "4,5" \
+                        --gpu 0
 fi
 
