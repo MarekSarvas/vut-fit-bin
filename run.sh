@@ -31,12 +31,13 @@ if [ ${stage} -le 1 ] &&[ ${stop_stage} -ge 1 ]; then
 fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
-    echo "stage 2: Neuroevolution I guess"
+    echo "stage 2: Neuroevolution"
     python3 evolution.py --generations 10 \
                         --population_size 5 \
-                        --mutation_probability 0.01 \
-                        --cnn_stages 2 \
-                        --cnn_nodes "4,5" \
+                        --mut_p 0.05 \
+                        --cross_p 0.05 \
+                        --cnn_stages 3 \
+                        --cnn_nodes "3,4,5" \
                         --gpu 0
 fi
 
