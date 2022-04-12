@@ -12,6 +12,11 @@ import json
 
 def ea_loop(params, population):
     dict = {}
+    tmp_results = []
+    for chromosome in population:
+        tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness}) 
+    dict['Init'] = tmp_results
+
     best = {"genotype": "", "acc": 0}
     for generation in range(params.generations):
         print("Generation: ", generation)

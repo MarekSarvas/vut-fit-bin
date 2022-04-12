@@ -19,7 +19,6 @@ def init_population(params):
         genotype = create_genotype(params)
         tmp = Chromosome(params.cnn_stages, list(map(int, params.cnn_nodes.split(","))), genotype) 
         population.append(tmp)
-        # print(tmp.genotype, tmp.fitness)
     return population 
 
 
@@ -32,8 +31,8 @@ def create_genotype(params):
 
         #bern = np.array(bernoulli.rvs(0.5, size=stage_length))
         bern = list(map(str, np.array(bernoulli.rvs(0.5, size=stage_length))))
-        
         gen_tmp = []
+
         # generate connection genotype for each stage
         for k in range(n_nodes): 
             #gen = gen + str(bern[:connections[k]) + "|"
@@ -42,10 +41,9 @@ def create_genotype(params):
 
         gen_tmp = gen_tmp[1:-1]
         gen.append(gen_tmp)
-        # print("Genotype {}, stage {}".format(gen, s))
     
     # remove excess "|" at the beginning
-    #gen = gen[1:]
+    # gen = gen[1:]
     # print("Init genotype {}".format(gen))
     return gen
 
@@ -77,13 +75,12 @@ def crossover(population, p):
     try:
         for chrom1 in population_it:
             chrom2 = next(population_it)
-            # print(chrom1.genotype, chrom2.genotype)
+
             for stage in range(len(chrom1.genotype)):
                 if random.random() < p:
                     num_cross += 1
                     chrom1.genotype[stage], chrom2.genotype[stage] = chrom2.genotype[stage], chrom1.genotype[stage]
 
-            # print(chrom1.genotype, chrom2.genotype)
     except StopIteration:
         # skip if last chromosome if population size is odd number
         pass
