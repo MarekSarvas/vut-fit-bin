@@ -5,40 +5,38 @@
 # Module: 
 
 from parser import get_parser
-from operations import init_population, selection, mutation, crossover 
+from operations import init_population, selection, mutation, crossover, compute_fitness
+import json
 
 
-def compute_fitness(population, params):
-    print("Computing new fitness")
-    pass
 
 def ea_loop(params, population):
+    dict = {}
+    best = {"genotype": "", "acc": 0}
     for generation in range(params.generations):
         print("Generation: ", generation)
-        population = selection(population)
+        
+        # TODO: remove init population from here
+        population = init_population(params)
+        population = selection(population, params)
         population = mutation(population, params.mut_p)
         population = crossover(population, params.cross_p)
-        compute_fitness(population, params)
+
+        # UNCOMMENT AFTER IMPLEMENTING FORWARD FUNCTION
+        # population = compute_fitness(population, params)
         
-        best = {"genotype": "", "acc": 0}
+        tmp_results = []
         for chromosome in population:
+            tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness}) 
             if chromosome.fitness >= best['acc']:
                 best["genotype"] = chromosome.genotype
                 best["acc"] = chromosome.fitness
-        print("Genotype -> {}    Accuracy -> {}".format(best["genotype"], best["acc"]))
-        print("========================")
+        dict["Gen_"+str(generation)] =  tmp_results
+    dict["best"] = {"genotype": best["genotype"], "fitness": best["acc"]}
         
 
-    best = {"genotype": "", "acc": 0}
-
-    print("Final population")
-    for chromosome in population:
-        if chromosome.fitness >= best['acc']:
-            best["genotype"] = chromosome.genotype
-            best["acc"] = chromosome.fitness
-        print("Genotype -> {}    Accuracy -> {}".format(chromosome.genotype, chromosome.fitness))
-    print("========================")
-    print("Genotype -> {}    Accuracy -> {}".format(best["genotype"], best["acc"]))
+    with open(params.exp_path, 'w') as f:
+        json.dump(dict, f)
 
 
 if __name__=='__main__':
@@ -46,7 +44,7 @@ if __name__=='__main__':
     params = parser.parse_args()
 
     population = init_population(params)
-    compute_fitness(population, params)
-    print("")
+    # UNCOMMENT AFTER IMPLEMENTING FORWARD FUNCTION
+    # population = compute_fitness(population, params)
 
     ea_loop(params, population)

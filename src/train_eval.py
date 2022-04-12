@@ -16,7 +16,7 @@ from models.baseModelLin import linearnet
 
 def train(epochs, model, cuda):
     # load data + create dataloader used in training for retrieving batches 
-    train = datasets.MNIST(root='../data', train=True, download=False, transform=torchvision.transforms.ToTensor())
+    train = datasets.MNIST(root='../data', train=True, download=True, transform=torchvision.transforms.ToTensor())
     loader = DataLoader(train, batch_size=2048, shuffle=True)
     
     # set loss function and gradient descent optimizer
@@ -54,7 +54,7 @@ def train(epochs, model, cuda):
 
 def eval(model, cuda):
     # load data + create dataloader used in evaluating for retrieving batches 
-    test = datasets.MNIST(root='../data', train=False, download=False, transform=torchvision.transforms.ToTensor())
+    test = datasets.MNIST(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
     loader = DataLoader(test, batch_size=128, shuffle=True)
   
     model.eval()
