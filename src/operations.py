@@ -9,7 +9,7 @@ import numpy as np
 import random
 
 from chromosome import Chromosome
-from train_eval import train, eval
+from train_eval_cifra import train, eval
 
 def init_population(params):
     assert params.cnn_stages == len(params.cnn_nodes.split(",")), "Incorrect number of CNN stages and nodes"
@@ -17,7 +17,9 @@ def init_population(params):
     print("Initializing Population")
     for _ in range(params.population_size):
         genotype = create_genotype(params)
-        tmp = Chromosome(params.cnn_stages, list(map(int, params.cnn_nodes.split(","))), genotype) 
+        tmp = Chromosome(params.cnn_stages, list(map(int, params.cnn_nodes.split(","))), genotype)
+        if params.gpu == 1:
+            tmp = tmp.cuda()
         population.append(tmp)
     return population 
 
@@ -39,9 +41,9 @@ def create_genotype(params):
             #gen_tmp = gen_tmp + "".join(bern[:k]) + "-"
             gen_tmp.append("".join(bern[:k]))
 
-        gen_tmp = gen_tmp[1:-1]
+        gen_tmp = gen_tmp[1:]
         gen.append(gen_tmp)
-    
+    print("GENOTYPE: {}, STAGES: {}, NODES: {}".format(gen, params.cnn_stages, params.cnn_nodes))  
     # remove excess "|" at the beginning
     # gen = gen[1:]
     # print("Init genotype {}".format(gen))
@@ -90,17 +92,18 @@ def crossover(population, p):
 
 
 def selection(population, params): 
+    # breakpoint()
     lowest = 0
     weights = []
     # get fitness values
     for chromosome in population:
-        weights.append(chromosome.fitness)
+        weights.append(chromosome.fitness.cpu())
      
     weights = np.array(weights)
     lowest = np.min(weights)
     
     # r_n - r_0 than make probability sum to 1
-    weights = (weights - lowest) 
+    # weights = (weights - lowest) 
     weights = weights / np.sum(weights)
 
     if params.verbose: print("Selection ================================")

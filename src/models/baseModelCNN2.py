@@ -27,8 +27,8 @@ class BaseNet(nn.Module):
             #nn.Linear(256, num_classes),
             nn.Linear(32*8*8, num_classes),
         )
-        self.a = nn.ModuleList([nn.Conv2d(in_channels=1, out_channels=16, kernel_size=5, stride=1, padding=2),
-                                nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=2),
+        self.a = nn.ModuleList([nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, stride=1, padding=2),
+                                nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1),
                                 nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=2),
                                 nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=2)])
 

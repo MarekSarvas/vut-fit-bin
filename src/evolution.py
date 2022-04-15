@@ -14,28 +14,25 @@ def ea_loop(params, population):
     dict = {}
     tmp_results = []
     for chromosome in population:
-        tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness}) 
+        tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness.cpu().detach().numpy().item(0)}) 
     dict['Init'] = tmp_results
 
     best = {"genotype": "", "acc": 0}
     for generation in range(params.generations):
         print("Generation: ", generation)
         
-        # TODO: remove init population from here
-        population = init_population(params)
         population = selection(population, params)
         population = mutation(population, params.mut_p)
         population = crossover(population, params.cross_p)
 
-        # UNCOMMENT AFTER IMPLEMENTING FORWARD FUNCTION
-        # population = compute_fitness(population, params)
+        population = compute_fitness(population, params)
         
         tmp_results = []
         for chromosome in population:
-            tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness}) 
-            if chromosome.fitness >= best['acc']:
+            tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness.cpu().detach().numpy().item(0)})
+            if chromosome.fitness.cpu().detach().numpy().item(0) >= best['acc']:
                 best["genotype"] = chromosome.genotype
-                best["acc"] = chromosome.fitness
+                best["acc"] = chromosome.fitness.cpu().detach().numpy().item(0)
         dict["Gen_"+str(generation)] =  tmp_results
     dict["best"] = {"genotype": best["genotype"], "fitness": best["acc"]}
         
@@ -49,7 +46,6 @@ if __name__=='__main__':
     params = parser.parse_args()
 
     population = init_population(params)
-    # UNCOMMENT AFTER IMPLEMENTING FORWARD FUNCTION
-    # population = compute_fitness(population, params)
+    population = compute_fitness(population, params)
 
     ea_loop(params, population)

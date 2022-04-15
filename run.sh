@@ -40,15 +40,16 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
-    python3 evolution.py  --generations 10 \
-                        --population_size 5 \
+    python3 evolution.py  --generations 20 \
+                        --population_size 6 \
+                        --epochs 1 \
                         --exp_path ${EXP_PATH}/${tag}.json \
-                        --mut_p 0.05 \
-                        --cross_p 0.5 \
-                        --cnn_stages 3 \
-                        --cnn_nodes "3,4,5" \
-                        --gpu 0 \
+                        --mut_p 0.8 \
+                        --cross_p 0.2 \
+                        --cnn_stages 2 \
+                        --cnn_nodes "4,5" \
+                        --gpu 1 \
                         --verbose True \
-                        > ${EXP_PATH}/${tag}.log 
+                #        > ${EXP_PATH}/${tag}.log 
 fi
 

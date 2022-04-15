@@ -12,12 +12,13 @@ from torch import optim
 
 from models.baseModelCNN import basenet
 from models.baseModelLin import linearnet
+from chromosome import Chromosome
 
 
 def train(epochs, model, cuda):
     # load data + create dataloader used in training for retrieving batches 
     train = datasets.MNIST(root='../data', train=True, download=True, transform=torchvision.transforms.ToTensor())
-    loader = DataLoader(train, batch_size=2048, shuffle=True)
+    loader = DataLoader(train, batch_size=1024, shuffle=True, pin_memory=True)
     
     # set loss function and gradient descent optimizer
     model.train()
@@ -33,10 +34,12 @@ def train(epochs, model, cuda):
             if cuda:
                 images = images.to('cuda')
                 labels = labels.to('cuda')
+
             # prediction and loss
             y = model(images)
             loss = criterion(y, labels)
-            
+            # print("LOSS: {}".format(loss)) 
+
             # train set accuracy
             y = torch.argmax(y, dim=1)
             correct += torch.sum(y == labels)
@@ -44,7 +47,8 @@ def train(epochs, model, cuda):
 
             # update weights of the model
             optimizer.zero_grad()
-            loss.backward()
+            #loss.backward()
+            loss.backward(retain_graph=True)
             optimizer.step()
 
         print('Epoch: {}, Accuracy: {:.5f}'.format(epoch, correct/total)) 
@@ -54,7 +58,7 @@ def train(epochs, model, cuda):
 def eval(model, cuda):
     # load data + create dataloader used in evaluating for retrieving batches 
     test = datasets.MNIST(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
-    loader = DataLoader(test, batch_size=128, shuffle=True)
+    loader = DataLoader(test, batch_size=1024, shuffle=True, pin_memory=True)
   
     model.eval()
     
@@ -76,20 +80,22 @@ def eval(model, cuda):
         total += len(y)
 
     print('Model accuracy: {:.5f}'.format(correct/total)) 
+    return correct/total
 
 
 if __name__ == '__main__':
-    cuda = True
+    cuda = False 
     if torch.cuda.is_available() and cuda:
         device = torch.device('cuda')
     else:
         device  = torch.device('cpu')
-    net1 = basenet(device, pretrained=False, num_classes=10)
-    net2 = linearnet(device, pretrained=False, num_classes=10)
+    #net = Chromosome(stages=3, nodes=[3, 4,5], genotype=[['1', '01'], ['0', '01', '100'], ['0', '11', '101', '0001']])
+    net = Chromosome(stages=3, nodes=[3, 4, 5], genotype=[['1', '01'], ['0', '00', '000'], ['0', '00', '000', '0000']])
     if cuda:
-        net1.cuda()
-        net2.cuda()
-    trained = train(3, net2, cuda)
-    eval(trained, cuda)
+        net.cuda()
+    for a in net.children():
+        print(a)
+    trained = train(3, net, cuda)
+    #eval(trained, cuda)
 
 
