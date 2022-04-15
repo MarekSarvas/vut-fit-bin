@@ -44,6 +44,11 @@ def ea_loop(params, population):
 if __name__=='__main__':
     parser = get_parser()
     params = parser.parse_args()
+    
+    if params.gpu != 0:
+        from safe_gpu import safe_gpu
+
+        gpu_owner = safe_gpu.GPUOwner()
 
     population = init_population(params)
     population = compute_fitness(population, params)

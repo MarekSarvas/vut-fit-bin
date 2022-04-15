@@ -7,6 +7,8 @@ packaging==21.3
 Pillow==9.0.1
 pyparsing==3.0.7
 python-dateutil==2.8.2
+safe-gpu==1.4
+scipy==1.8.0
 six==1.16.0
 torch==1.10.2+cu113
 torchaudio==0.10.2+cu113
