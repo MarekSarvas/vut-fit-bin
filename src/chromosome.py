@@ -30,7 +30,11 @@ class Chromosome(nn.Module):
             nn.ReLU(inplace=True)
         )
 
-        self.fin_linear = nn.Linear(3136, num_classes)
+        self.fin_linear = nn.Sequential(
+                nn.Linear(3136, 500),
+                nn.Dropout(0.1),
+                nn.Linear(500, num_classes)
+        )
 
     def forward2(self, x):
         # for each stage

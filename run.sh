@@ -13,8 +13,8 @@ verbose=0
 
 baseline=cnn
 epochs=10
-exp_id='test'
-tag='test'
+exp_id='exp1_not_training'
+tag='exp1_not_training'
 
 EXP_PATH=${MAIN_PATH}/exp/${exp_id}
 
@@ -42,7 +42,7 @@ if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
     python3 evolution.py  --generations 20 \
                         --population_size 6 \
-                        --epochs 1 \
+                        --epochs 5 \
                         --exp_path ${EXP_PATH}/${tag}.json \
                         --mut_p 0.8 \
                         --cross_p 0.2 \
