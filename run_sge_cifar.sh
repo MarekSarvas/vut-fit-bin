@@ -5,8 +5,8 @@
 #$ -q long.q@*
 #$ -l gpu=1,gpu_ram=8G,ram_free=8G,mem_free=8G
 
-#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp.log
-#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp.err
+#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp_cifar.log
+#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp_Cifar.err
 
 cd /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin
 
@@ -23,12 +23,12 @@ verbose=0
 
 baseline=cnn
 
-epochs=3
+epochs=30
 mutation_p=0.05
 crossover_p=0.2
 stages=2
 nodes="4_5"
-dataset="mnist"
+dataset="cifar10"
 
 
 exp_id=exp_stages${stages}_nodes${nodes}
