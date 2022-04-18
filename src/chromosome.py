@@ -9,9 +9,7 @@ class Chromosome(nn.Module):
 
     def __init__(self, stages, nodes, genotype, input_size=28, num_classes=10):
         super(Chromosome, self).__init__()
-        # breakpoint()
         self.genotype = genotype
-        self.fitness = np.random.random_sample() * 100
 
         self.S = stages  # number of stages
         self.K = nodes  # number of convolution layers in each stage
@@ -19,135 +17,42 @@ class Chromosome(nn.Module):
         self.out_channels = 32
         self.in_channels = 32
         self.init_in_channels = 1
-
+        if stages == 2:
+            self.flat_feat = 3136
+        else:
+            self.flat_feat = 1152
         self.default_kernel_size = 5
         self.kernel_size = 3
 
-        #self.cnn_stages = self.create_cnn_stages()
-        self.cnn_stages2 = self.create_cnn_stages2()
+        self.cnn_stages = self.create_cnn_stages()
         self.between_stage = nn.Sequential(
             nn.MaxPool2d(kernel_size=2),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=False)
         )
-
         self.fin_linear = nn.Sequential(
-                nn.Linear(3136, 500),
                 nn.Dropout(0.1),
-                nn.Linear(500, num_classes)
+                nn.Linear(self.flat_feat, num_classes)
         )
-
-    def forward2(self, x):
-        # for each stage
-        for i, stage in enumerate(self.genotype):
-
-            # init outputs of nodes in current stage
-            # stage_outputs = torch.full((1, self.K[i]), float('inf'), requires_grad=True)
-            stage_outputs = []
-            for _ in range(self.K[i]):
-                stage_outputs.append(torch.Tensor([float('inf')]))
-
-            # Default first node
-            x = self.cnn_stages['stage' + str(i)][0](x)
-            if not self.is_stage_connection(stage):
-                x = self.between_stage(x)
-                continue
-
-            # for each connection in stage
-            for i_layer, connection_string in enumerate(stage):
-                into_layer = i_layer + 2
-
-                # skip if 'into_layer' node has no input connections
-                if self.is_connection(connection_string):
-                    x_layer = 0
-                    # for each bit
-                    for f_layer, is_connected in enumerate(connection_string):
-                        from_layer = f_layer + 1
-                        #breakpoint()
-                        if int(is_connected) == 1:
-                            #print("CONNECTION: {} -> {}, IS CONNECTED: {}".format(from_layer, into_layer, is_connected))
-                            # if INF than take value from default Conv2d node
-                            if not self.cnn_stages['stage' + str(i)][from_layer].has_input_connection:
-                                stage_outputs[from_layer - 1] = self.cnn_stages['stage' + str(i)][from_layer](x)
-                                self.cnn_stages['stage' + str(i)][from_layer].has_output_connection = True
-                                self.cnn_stages['stage' + str(i)][from_layer].has_input_connection = True
-
-                            # sum output of previous layers that are connected as inputs into current layer
-                            x_layer += stage_outputs[from_layer - 1]
-                    # run input through layer 'into_layer' in stage 'i'
-                    stage_outputs[into_layer - 1] = self.cnn_stages['stage' + str(i)][into_layer](x_layer)
-                    self.cnn_stages['stage' + str(i)][into_layer].has_input_connection = True
-
-                #print("=====END OF CONNECTION {}-{}=====".format(i, into_layer))
-
-
-            y = 0
-            for node_idx, node in enumerate((self.cnn_stages['stage' + str(i)])[1:-1]):
-                if node.has_input_connection and not node.has_output_connection:
-                    y += stage_outputs[node_idx]
-
-            x = self.cnn_stages['stage' + str(i)][-1](y)
-
-            x = self.between_stage(x)
-
-
-        # classifier part
-        self.reset_bools()
-        x = torch.flatten(x, 1)
-        #print("FLATTEN: ", x.shape)
-        x = self.fin_linear(x)
-        x = torch.softmax(x, dim=1)
-        return x
-
-    def reset_bools(self):
-        for _, stage in self.cnn_stages.items():
-            for layer in stage:
-                layer.has_input_connection = False
-                layer.has_output_connection = False
-
-    def is_connection(self, c_string):
-        return '1' in c_string
     
 
-    def create_cnn_stages(self):
-        """ Create structure containing K nodes that will be connected
-            according to the chromosome value.
-        """
-        stage_dict = {}
+    def c2(self):
+        stages = nn.ModuleList([])
 
-        # generate stages -> modules containing differently connected 
-        # con2d layers according to the genes
+        first_in_channels = self.in_channels
         for stage in range(self.S):
-            stage_nodes = nn.ModuleList([])
-
-            # default first Conv layer
             if stage == 0:
-                stage_nodes.append(MyConv2d(in_channels=self.init_in_channels, out_channels=self.out_channels,
-                                            kernel_size=self.default_kernel_size, padding=2))
+                stages.append(MyConv2d(in_channels=self.init_in_channels, out_channels=self.out_channels, kernel_size=self.default_kernel_size, padding=2))
             else:
-                stage_nodes.append(MyConv2d(in_channels=self.in_channels, out_channels=self.out_channels,
-                                            kernel_size=self.default_kernel_size, padding=1))
-                self.in_channels = self.in_channels * 2
+                stages.append(MyConv2d(in_channels=first_in_channels, out_channels=self.out_channels, kernel_size=self.default_kernel_size, padding=2))
+                first_in_channels = first_in_channels * 2
 
-            # generate conv2d layers in current stage
-            for _ in range(self.K[stage]):
-                stage_nodes.append(
-                    MyConv2d(in_channels=self.in_channels, out_channels=self.out_channels, kernel_size=self.kernel_size,
-                             padding=1))
-
-            # default last Conv layer
-            stage_nodes.append(
-                MyConv2d(in_channels=self.in_channels, out_channels=self.out_channels, kernel_size=self.kernel_size,
-                         padding=1))
+            self.in_channels = self.in_channels * 2
             self.out_channels = self.out_channels * 2
 
-            stage_dict['stage{}'.format(stage)] = stage_nodes
+        return stages 
 
-        return nn.ModuleDict(stage_dict)
 
-    def create_cnn_stages2(self):
-        """ Create structure containing K nodes that will be connected
-            according to the chromosome value.
-        """
+    def c(self):
         stages = nn.ModuleList([])
         first_in_channels = self.in_channels
         # generate stages -> modules containing differently connected 
@@ -161,30 +66,50 @@ class Chromosome(nn.Module):
 
             self.in_channels = self.in_channels * 2
             self.out_channels = self.out_channels * 2
+        return stages
 
+    def create_cnn_stages(self):
+        """ Create structure containing K nodes that will be connected
+            according to the chromosome value.
+        """
+        stages = nn.ModuleList([])
+        first_in_channels = self.in_channels
+
+        # generate stages -> modules containing differently connected 
+        # con2d layers according to the genes
+        for stage in range(self.S):
+            # first stage has differemt number of input channels
+            if stage == 0:
+                stages.append(Stage(self.K[stage], self.in_channels, self.init_in_channels, self.out_channels, self.kernel_size, self.default_kernel_size, self.genotype[stage])) 
+            else:
+                stages.append(Stage(self.K[stage], self.in_channels, first_in_channels, self.out_channels, self.kernel_size, self.default_kernel_size, self.genotype[stage])) 
+                first_in_channels = first_in_channels * 2
+
+            self.in_channels = self.in_channels * 2
+            self.out_channels = self.out_channels * 2
         return stages 
 
     def forward(self, x):
-        for stage in self.cnn_stages2:
-            x = stage.forward(x)
+        for stage in self.cnn_stages:
+            x = stage(x)
             x = self.between_stage(x)
 
-
         x = torch.flatten(x, 1)
-        #print("FLATTEN: ", x.shape)
         x = self.fin_linear(x)
         x = torch.softmax(x, dim=1)
         return x
 
 
-class MyConv2d(nn.Conv2d):
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True,
-                 padding_mode='zeros', device=None, dtype=None):
-        super(MyConv2d, self).__init__(in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias,
-                                       padding_mode, device, dtype)
+
+class MyConv2d(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None):
+        super(MyConv2d, self).__init__()
         self.has_input_connection = False
         self.has_output_connection = False
-        self.output = 0
+        self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=2)
+
+    def forward(self,x):
+        return self.conv(x)
 
 
 class Stage(nn.Module):
@@ -199,12 +124,17 @@ class Stage(nn.Module):
             self.nodes.append(MyConv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=1))
     
         self.def_output_node = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=1)
-
+    
     def forward(self, x):
+        x = self.def_input_node(x)
+        return x
+
+    def forward_(self, x):
         x = self.def_input_node(x)
         if not self.check_for_connection():
             return x
         tmp_outputs = []
+        
         for _ in range(self.K):
             tmp_outputs.append(0)
 
@@ -215,15 +145,18 @@ class Stage(nn.Module):
                 if bit == '1':
                     tmp_outputs[node_idx+1] += tmp_outputs[input_node_idx] 
                     self.nodes[input_node_idx].has_output_connection = True
+                    self.nodes[input_node_idx].has_input_connection = True
 
             if not torch.is_tensor(tmp_outputs[node_idx+1]):
                 tmp_outputs[node_idx+1] = x
 
-            tmp_outputs[node_idx+1] = self.nodes[node_idx+1](tmp_outputs[node_idx+1])
+            if self.nodes[node_idx+1].has_input_connection:
+                tmp_outputs[node_idx+1] = self.nodes[node_idx+1](tmp_outputs[node_idx+1])
 
         for i in range(self.K-1):
-            if not self.nodes[i].has_output_connection:
+            if not self.nodes[i].has_output_connection and self.nodes[i].has_input_connection:
                 tmp_outputs[-1] += tmp_outputs[i] 
+
         x = self.def_output_node(tmp_outputs[-1])
         return x
 

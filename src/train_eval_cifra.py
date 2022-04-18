@@ -18,7 +18,7 @@ from chromosome import Chromosome
 def train(epochs, model, cuda):
     # load data + create dataloader used in training for retrieving batches 
     train = datasets.MNIST(root='../data', train=True, download=False, transform=torchvision.transforms.ToTensor())
-    loader = DataLoader(train, batch_size=1024, shuffle=True, pin_memory=True)
+    loader = DataLoader(train, batch_size=1024, shuffle=False, pin_memory=True)
     
     # set loss function and gradient descent optimizer
     model.train()
@@ -65,19 +65,20 @@ def eval(model, cuda):
     correct = 0
     total = 0
     
-    print("Evaluating on test set...") 
-    for batch, (images, labels) in enumerate(loader):
-        if cuda:
-            images = images.to('cuda')
-            labels = labels.to('cuda')            
+    with torch.no_grad():
+        print("Evaluating on test set...") 
+        for batch, (images, labels) in enumerate(loader):
+            if cuda:
+                images = images.to('cuda')
+                labels = labels.to('cuda')            
 
-        # model predictions
-        y = model(images)
-        
-        # compute accuracy
-        y = torch.argmax(y, dim=1)
-        correct += torch.sum(y == labels)
-        total += len(y)
+            # model predictions
+            y = model(images)
+            
+            # compute accuracy
+            y = torch.argmax(y, dim=1)
+            correct += torch.sum(y == labels)
+            total += len(y)
 
     print('Model accuracy: {:.5f}'.format(correct/total)) 
     return correct/total
@@ -89,13 +90,13 @@ if __name__ == '__main__':
         device = torch.device('cuda')
     else:
         device  = torch.device('cpu')
-    #net = Chromosome(stages=3, nodes=[3, 4,5], genotype=[['1', '01'], ['0', '01', '100'], ['0', '11', '101', '0001']])
-    net = Chromosome(stages=3, nodes=[3, 4, 5], genotype=[['1', '01'], ['0', '00', '000'], ['0', '00', '000', '0000']])
+    net = Chromosome(stages=3, nodes=[3, 4,5], genotype=[['1', '01'], ['0', '01', '100'], ['0', '11', '101', '0001']])
+    #net = Chromosome(stages=3, nodes=[3, 4, 5], genotype=[['0', '00'], ['0', '00', '000'], ['0', '00', '000', '0000']])
     if cuda:
         net.cuda()
     for a in net.children():
         print(a)
-    trained = train(3, net, cuda)
+    trained = train(30, net, cuda)
     #eval(trained, cuda)
 
 

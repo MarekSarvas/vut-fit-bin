@@ -12,12 +12,12 @@ from chromosome import Chromosome
 from train_eval_cifra import train, eval
 
 def init_population(params):
-    assert params.cnn_stages == len(params.cnn_nodes.split(",")), "Incorrect number of CNN stages and nodes"
+    assert params.cnn_stages == len(params.cnn_nodes.split("_")), "Incorrect number of CNN stages and nodes"
     population = []
     print("Initializing Population")
     for _ in range(params.population_size):
         genotype = create_genotype(params)
-        tmp = Chromosome(params.cnn_stages, list(map(int, params.cnn_nodes.split(","))), genotype)
+        tmp = Chromosome(params.cnn_stages, list(map(int, params.cnn_nodes.split("_"))), genotype)
         if params.gpu == 1:
             tmp = tmp.cuda()
         population.append(tmp)
@@ -28,7 +28,7 @@ def create_genotype(params):
     gen = []
     # generate genotype for each stage and concat
     for s in range(params.cnn_stages):
-        n_nodes = int(params.cnn_nodes.split(",")[s])
+        n_nodes = int(params.cnn_nodes.split("_")[s])
         stage_length = int((n_nodes * (n_nodes-1)) / 2 )
 
         #bern = np.array(bernoulli.rvs(0.5, size=stage_length))
@@ -103,7 +103,7 @@ def selection(population, params):
     lowest = np.min(weights)
     
     # r_n - r_0 than make probability sum to 1
-    # weights = (weights - lowest) 
+    weights = (weights - lowest) 
     weights = weights / np.sum(weights)
 
     if params.verbose: print("Selection ================================")

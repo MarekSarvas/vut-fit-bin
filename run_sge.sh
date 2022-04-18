@@ -1,5 +1,15 @@
 #!/usr/bin/bash
-# Bash template for running dataprep and training the model
+
+
+#$ -N run 
+#$ -q long.q@*
+#$ -l gpu=1,gpu_ram=8G,ram_free=8G,mem_free=8G
+
+#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp1.log
+#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp1.err
+
+cd /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin
+
 . ./path.sh || exit 1;
 
 MAIN_PATH=$(pwd)
@@ -47,8 +57,8 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
-    python3 evolution.py  --generations 1 \
-                        --population_size 5 \
+    python3 evolution.py  --generations 30 \
+                        --population_size 10 \
                         --epochs ${epochs} \
                         --exp_path ${EXP_PATH}/${tag}.json \
                         --mut_p ${mutation_p} \
