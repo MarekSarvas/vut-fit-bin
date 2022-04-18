@@ -15,14 +15,19 @@ from models.baseModelLin import linearnet
 from chromosome import Chromosome
 
 
-def train(epochs, model, cuda):
+def train(epochs, model, cuda, dataset="mnist"):
     # load data + create dataloader used in training for retrieving batches 
-    train = datasets.MNIST(root='../data', train=True, download=False, transform=torchvision.transforms.ToTensor())
-    loader = DataLoader(train, batch_size=1024, shuffle=False, pin_memory=True)
+    if dataset == "fashion":
+        train = datasets.FashionMNIST(root='../data', train=True, download=True, transform=torchvision.transforms.ToTensor())
+    elif dataset == "cifar10":
+        train = datasets.CIFAR10(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
+    else:
+        train = datasets.MNIST(root='../data', train=True, download=False, transform=torchvision.transforms.ToTensor())
+    loader = DataLoader(train, batch_size=1024, shuffle=True, pin_memory=True)
     
     # set loss function and gradient descent optimizer
     model.train()
-    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
     criterion = torch.nn.CrossEntropyLoss()
     
     correct = 0
@@ -34,30 +39,37 @@ def train(epochs, model, cuda):
             if cuda:
                 images = images.to('cuda')
                 labels = labels.to('cuda')
+            
 
             # prediction and loss
+            optimizer.zero_grad()
             y = model(images)
             loss = criterion(y, labels)
-            # print("LOSS: {}".format(loss)) 
+            #print("LOSS: {}".format(loss)) 
 
             # train set accuracy
-            y = torch.argmax(y, dim=1)
-            correct += torch.sum(y == labels)
-            total += len(y)
 
             # update weights of the model
-            optimizer.zero_grad()
             #loss.backward()
             loss.backward(retain_graph=True)
             optimizer.step()
 
+            y = torch.argmax(y, dim=1)
+            correct += torch.sum(y == labels)
+            total += len(y)
         print('Epoch: {}, Accuracy: {:.5f}'.format(epoch, correct/total)) 
     return model
 
 
-def eval(model, cuda):
+def eval(model, cuda, dataset="mnist"):
     # load data + create dataloader used in evaluating for retrieving batches 
-    test = datasets.MNIST(root='../data', train=False, download=False, transform=torchvision.transforms.ToTensor())
+    if dataset == "fashion":
+        test = datasets.FashionMNIST(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
+    elif dataset == "cifar10":
+        test = datasets.CIFAR10(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
+    else:
+        test = datasets.MNIST(root='../data', train=False, download=False, transform=torchvision.transforms.ToTensor())
+
     loader = DataLoader(test, batch_size=1024, shuffle=True, pin_memory=True)
   
     model.eval()
@@ -90,13 +102,16 @@ if __name__ == '__main__':
         device = torch.device('cuda')
     else:
         device  = torch.device('cpu')
-    net = Chromosome(stages=3, nodes=[3, 4,5], genotype=[['1', '01'], ['0', '01', '100'], ['0', '11', '101', '0001']])
-    #net = Chromosome(stages=3, nodes=[3, 4, 5], genotype=[['0', '00'], ['0', '00', '000'], ['0', '00', '000', '0000']])
+    data="mnist"
+    #net = Chromosome(stages=3, nodes=[3, 4,5], genotype=[['1', '00'], ['0', '01', '000'], ['0', '00', '000', '0000']], dataset=data)
+    #net = Chromosome(stages=3, nodes=[3, 4, 5], genotype=[['1', '00'], ['0', '11', '010'], ['0', '01', '000', '0101']], dataset=data)
+    #net = Chromosome(stages=2, nodes=[4, 5], genotype=[['1', '00', '000'], ['0', '11', '101', '0000']])
+    net = Chromosome(stages=2, nodes=[4, 5], genotype=[['1', '11', '110'], ['1', '10', '101', '1011']], dataset=data)
     if cuda:
         net.cuda()
-    for a in net.children():
-        print(a)
-    trained = train(30, net, cuda)
-    #eval(trained, cuda)
+    #for a in net.children():
+        #print(a)
+    trained = train(5, net, cuda, data)
+    eval(trained, cuda, data)
 
 

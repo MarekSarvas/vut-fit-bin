@@ -57,7 +57,7 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
-    python3 evolution.py  --generations 30 \
+    python3 evolution.py  --generations 20 \
                         --population_size 10 \
                         --epochs ${epochs} \
                         --exp_path ${EXP_PATH}/${tag}.json \

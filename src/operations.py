@@ -17,7 +17,7 @@ def init_population(params):
     print("Initializing Population")
     for _ in range(params.population_size):
         genotype = create_genotype(params)
-        tmp = Chromosome(params.cnn_stages, list(map(int, params.cnn_nodes.split("_"))), genotype)
+        tmp = Chromosome(params.cnn_stages, list(map(int, params.cnn_nodes.split("_"))), genotype, dataset=params.dataset)
         if params.gpu == 1:
             tmp = tmp.cuda()
         population.append(tmp)
@@ -100,10 +100,10 @@ def selection(population, params):
         weights.append(chromosome.fitness.cpu())
      
     weights = np.array(weights)
-    lowest = np.min(weights)
-    
+    lowest = np.argmin(weights)
+    weights[lowest] = 0 
     # r_n - r_0 than make probability sum to 1
-    weights = (weights - lowest) 
+    #weights = (weights - lowest) + 0.00001 
     weights = weights / np.sum(weights)
 
     if params.verbose: print("Selection ================================")
@@ -120,8 +120,8 @@ def print_p(population):
 
 def compute_fitness(population, params):
     for chromosome in population:
-        train(params.epochs, chromosome, params.gpu)
-        acc = eval(chromosome, params.gpu)
+        train(params.epochs, chromosome, params.gpu, params.dataset)
+        acc = eval(chromosome, params.gpu, params.dataset)
         chromosome.fitness = acc
     return population
 

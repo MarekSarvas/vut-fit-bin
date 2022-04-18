@@ -26,5 +26,7 @@ def get_parser():
     # GPU
     parser.add_argument("--gpu", type=int, default=0, help="Compute on gpu")
 
+    parser.add_argument("--dataset", type=str, default="mnist", help="Dataset used to evaluate population.")
+
     parser.add_argument("--verbose", type=bool, default=False, help="Compute on gpu")
     return parser
