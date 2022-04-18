@@ -8,9 +8,12 @@ cd src/
 
 stage=2
 stop_stage=2
+if [ $# -eq 2 ]; then
+    stage=$1
+    stop_stage=$2
+fi
 dumpdir=dump
 verbose=0
-
 baseline=cnn
 
 epochs=3
@@ -30,8 +33,9 @@ mkdir -pv ${EXP_PATH}
 
 if [ ${stage} -le 0 ] &&[ ${stop_stage} -ge 0 ]; then
     echo "stage 0: Data Preparation"
-    rm -r ../data/MNIST/
-    python download_data.py
+    rm -r ${MAIN_PATH}/../data/ 
+    mkdir ${MAIN_PATH}/../data/
+    python3 download_data.py --data_path ${MAIN_PATH}/data/
 fi
 
 

@@ -1,4 +1,10 @@
 
+all:
+	bash run.sh
+
+dataset:
+	bash run.sh 0 0 
+
 setup:
 	bash install.sh
 

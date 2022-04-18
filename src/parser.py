@@ -1,3 +1,9 @@
+# Project: VUT FIT BIN - Neuroevolution
+# Author: Marek Sarvas
+# Login: xsarva00                   
+# Date: 2021/2022                       
+# Module: EA arguments.
+
 import argparse
 
 def get_parser():
