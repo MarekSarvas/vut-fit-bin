@@ -17,9 +17,9 @@ from chromosome import Chromosome
 def train(epochs, model, cuda, dataset="mnist"):
     # load data + create dataloader used in training for retrieving batches 
     if dataset == "fashion":
-        train = datasets.FashionMNIST(root='../data', train=True, download=True, transform=torchvision.transforms.ToTensor())
+        train = datasets.FashionMNIST(root='../data', train=True, download=False, transform=torchvision.transforms.ToTensor())
     elif dataset == "cifar10":
-        train = datasets.CIFAR10(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
+        train = datasets.CIFAR10(root='../data', train=False, download=False, transform=torchvision.transforms.ToTensor())
     else:
         train = datasets.MNIST(root='../data', train=True, download=False, transform=torchvision.transforms.ToTensor())
     loader = DataLoader(train, batch_size=1024, shuffle=True, pin_memory=True)
@@ -63,9 +63,9 @@ def train(epochs, model, cuda, dataset="mnist"):
 def eval(model, cuda, dataset="mnist"):
     # load data + create dataloader used in evaluating for retrieving batches 
     if dataset == "fashion":
-        test = datasets.FashionMNIST(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
+        test = datasets.FashionMNIST(root='../data', train=False, download=False, transform=torchvision.transforms.ToTensor())
     elif dataset == "cifar10":
-        test = datasets.CIFAR10(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
+        test = datasets.CIFAR10(root='../data', train=False, download=False, transform=torchvision.transforms.ToTensor())
     else:
         test = datasets.MNIST(root='../data', train=False, download=False, transform=torchvision.transforms.ToTensor())
 
