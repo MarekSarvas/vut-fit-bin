@@ -1,5 +1,6 @@
 src/__pycache__
 src/models/__pycache__
 data/
-exp/
+exp/exp*.log
+exp/exp*.err
 env-bin/
