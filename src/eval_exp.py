@@ -18,7 +18,7 @@ def eval_box(data, path, dataset, title, verbose):
 
     plt.setp(box["medians"], color='red')
     plt.setp(box["boxes"], facecolor='lightblue')
-    ax.yaxis.grid(True)
+    plt.grid(True, which='both', axis='both', linestyle='--', alpha=0.5)
     plt.ylabel("Classification Accuracy")
     plt.xlabel("Generation")
 
