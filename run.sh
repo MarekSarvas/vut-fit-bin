@@ -6,8 +6,8 @@ MAIN_PATH=$(pwd)
 
 cd src/
 
-stage=2
-stop_stage=2
+stage=3
+stop_stage=3
 if [ $# -eq 2 ]; then
     stage=$1
     stop_stage=$2
@@ -66,3 +66,11 @@ if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
                 #        > ${EXP_PATH}/${tag}.log 
 fi
 
+if [ ${stage} -le 3 ] &&[ ${stop_stage} -ge 3 ]; then
+    echo "stage 3: Generate plots"
+    for set in mnist cifar10 fashion; do
+        mkdir -pv ${MAIN_PATH}/plots/${set}
+        python3 eval_exp.py --exp_root ${MAIN_PATH}/exp/${set} \
+                            --dataset ${set}
+    done
+fi
