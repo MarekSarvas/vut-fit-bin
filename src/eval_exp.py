@@ -2,7 +2,7 @@
 # Author: Marek Sarvas
 # Login: xsarva00                   
 # Date: 2021/2022                       
-# Module: Boxplot of accuracy of each generation on given dataset.
+# Module: Boxplot and table in latex format of accuracy of each generation on given dataset.
 
 import os
 import re
@@ -30,27 +30,30 @@ def eval_box(data, path, dataset, title, verbose):
 
 
 def eval_table(data, path, dataset):
-
     path = path.replace(".pdf", ".tex")
-    pd.set_option('display.precision', 4) 
+    
+    # create dataframe and add generations as column
     df = pd.DataFrame({"min \%": data["min"], "Max \%": data["max"], "Avg \%": data["avg"], "Med \%": data["med"]})
     df = df.rename_axis('Gen').reset_index()
-    styler = df.style.format({"min \%": '{:.4f}', "Max \%": '{:.4f}', "Avg \%": '{:.4f}', "Med \%": '{:.4f}'})
-
+    
+    # style table
+    styler = df.style.format({"min \%": '{:.4f}', "Max \%": '{:.4f}', "Avg \%": '{:.4f}', "Med \%": '{:.4f}'})  # set precision
     styler = styler.hide_index()
-    styler.applymap_index(lambda v: "font-weight: bold;", axis="columns")
+    styler.applymap_index(lambda v: "font-weight: bold;", axis="columns") # bold first row 
 
-
-    tex_content = styler.to_latex(convert_css=True)
+    tex_content = styler.to_latex(convert_css=True)  # convert to latex string
+    # add column borders
     re_borders = re.compile(r"begin\{tabular\}\{([^\}]+)\}")
     borders = re_borders.findall(tex_content)[0]
     borders = '|'.join(list(borders))
     tex_content = re_borders.sub("begin{tabular}{|" + borders + "|}", tex_content)
+
     tex_content = tex_content.replace("\\bfseries", "\hline\n\\bfseries", 1) # add upper border
     tex_content = tex_content.replace("0", "\hline\n 0", 1) # add first row border
-    tex_content = tex_content.replace("\\end", "\hline\n\\end", 1) # add first row border
-    tex_content = tex_content.replace("Med", "\\bfseries Med", 1) # add first row border
-
+    tex_content = tex_content.replace("\\end", "\hline\n\\end", 1) # add last border
+    tex_content = tex_content.replace("Med", "\\bfseries Med", 1) # fix last column bold text 
+    
+    # save as .tex file
     with open(path, "w") as f:
         f.write(tex_content)
 
