@@ -23,8 +23,8 @@ def ea_loop(params, population):
         print("Generation: ", generation)
         
         population = selection(population, params)
-        population = mutation(population, params.mut_p)
-        population = crossover(population, params.cross_p)
+        population = mutation(population, params.pm, params.qm)
+        population = crossover(population, params.pc, params.qc)
 
         population = compute_fitness(population, params)
         

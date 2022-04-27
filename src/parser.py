@@ -15,8 +15,10 @@ def get_parser():
     # EA params 
     parser.add_argument("--generations", type=int, default=10, help="Number of generations")
     parser.add_argument("--population_size", type=int, default=5, help="Populatin")
-    parser.add_argument("--mut_p", type=float, default=0.05, help="Probability of mutation of gene.")
-    parser.add_argument("--cross_p", type=float, default=0.05, help="Probability of mutation of gene.")
+    parser.add_argument("--pm", type=float, default=0.8, help="Probability of mutation of chromozome")
+    parser.add_argument("--qm", type=float, default=0.1, help="Probability of mutation of bit in chromozome.")
+    parser.add_argument("--pc", type=float, default=0.2, help="Probability of crossover of pair.")
+    parser.add_argument("--qc", type=float, default=0.3, help="Probability of crossover of each stage.")
 
     # Neural Network hyper params
     parser.add_argument("--cnn_stages", type=int, default=2, help="Number of stages")

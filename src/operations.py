@@ -46,29 +46,30 @@ def create_genotype(params):
     print("GENOTYPE: {}, STAGES: {}, NODES: {}".format(gen, params.cnn_stages, params.cnn_nodes))  
     return gen
 
-def mutation(population, p):
+def mutation(population, pm, qm):
     """ Function that mutates each bit in each chromosome in population with probability p.
     """
     num_mut = 0
     for chromosome in population:
-        for stage in range(len(chromosome.genotype)):
-            # for node composed of CNN layers
-            for i, node in enumerate(chromosome.genotype[stage]):
-                tmp_node = ""
-                # for each connection
-                for bit in node:
-                    if random.random() < p:
-                        tmp_node = tmp_node + str(1 - int(bit))
-                        num_mut += 1
-                    else:
-                        tmp_node = tmp_node + bit
-                chromosome.genotype[stage][i] = tmp_node
+        if random.random() < pm:
+            for stage in range(len(chromosome.genotype)):
+                # for node composed of CNN layers
+                for i, node in enumerate(chromosome.genotype[stage]):
+                    tmp_node = ""
+                    # for each connection
+                    for bit in node:
+                        if random.random() < qm:
+                            tmp_node = tmp_node + str(1 - int(bit))
+                            num_mut += 1
+                        else:
+                            tmp_node = tmp_node + bit
+                    chromosome.genotype[stage][i] = tmp_node
     
-    print("Mutating population({}), with probability {}. Number of mutations: {}.".format(len(population), p, num_mut))
+    print("Mutating population({}), with pm={}, qm={}. Number of mutations: {}.".format(len(population), pm, qm, num_mut))
     return population
 
 
-def crossover(population, p):
+def crossover(population, pc, qc):
     """ Performs crossover of each stage with probability p for two individuals.
     """
     num_cross = 0 
@@ -76,17 +77,17 @@ def crossover(population, p):
     try:
         for chrom1 in population_it:
             chrom2 = next(population_it)
-
-            for stage in range(len(chrom1.genotype)):
-                if random.random() < p:
-                    num_cross += 1
-                    chrom1.genotype[stage], chrom2.genotype[stage] = chrom2.genotype[stage], chrom1.genotype[stage]
+            if random.random() < pc: 
+                for stage in range(len(chrom1.genotype)):
+                    if random.random() < qc:
+                        num_cross += 1
+                        chrom1.genotype[stage], chrom2.genotype[stage] = chrom2.genotype[stage], chrom1.genotype[stage]
 
     except StopIteration:
         # skip if last chromosome if population size is odd number
         pass
 
-    print("Crossover on population({}), with probability {}. Number of crowssovers: {}.".format(len(population), p, num_cross))
+    print("Crossover on population({}), with pc={}, qc={}. Number of crowssovers: {}.".format(len(population), pc, qc, num_cross))
     return population
 
 

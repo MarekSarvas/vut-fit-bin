@@ -5,8 +5,8 @@
 #$ -q long.q@*
 #$ -l gpu=1,gpu_ram=8G,ram_free=8G,mem_free=8G
 
-#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp_fashion.log
-#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp_fashion.err
+#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp.log
+#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp.err
 
 cd /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin
 
@@ -24,17 +24,19 @@ verbose=0
 baseline=cnn
 
 epochs=5
-mutation_p=0.8
-crossover_p=0.2
+p_m=0.8
+q_m=0.1
+p_c=0.2
+q_c=0.3
 stages=3
 nodes="3_4_5"
 dataset="fashion"
 population_size=20
-generations=50
+generations=30
 
 
 exp_id=exp_stages${stages}_nodes${nodes}
-tag="pop_${population_size}_gen_${generations}_epochs_${epochs}_mut${mutation_p}_cross${crossover_p}"
+tag="pop_${population_size}_gen_${generations}_epochs_${epochs}_pm${p_m}_qm${q_m}_pc${p_c}_qc${q_c}"
 
 
 EXP_PATH=${MAIN_PATH}/exp/${dataset}/${exp_id}
@@ -65,8 +67,10 @@ if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
                         --population_size ${population_size} \
                         --epochs ${epochs} \
                         --exp_path ${EXP_PATH}/${tag}.json \
-                        --mut_p ${mutation_p} \
-                        --cross_p ${crossover_p} \
+                        --pm ${p_m} \
+                        --qm ${q_m} \
+                        --pc ${p_c} \
+                        --qc ${q_c} \
                         --cnn_stages ${stages} \
                         --cnn_nodes ${nodes} \
                         --gpu 1 \
