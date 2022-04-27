@@ -90,9 +90,10 @@ def eval(model, cuda, dataset="mnist"):
             y = torch.argmax(y, dim=1)
             correct += torch.sum(y == labels)
             total += len(y)
-
-    print('Model accuracy: {:.5f}'.format(correct/total)) 
-    return correct/total
+    acc = correct/total
+    acc = acc.cpu().numpy()
+    print('Model accuracy: {:.5f} '.format(acc)) 
+    return acc
 
 
 if __name__ == '__main__':

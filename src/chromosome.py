@@ -18,7 +18,7 @@ class Chromosome(nn.Module):
         self.genotype = genotype
         self.S = stages  # number of stages
         self.K = nodes  # number of convolution layers in each stage
-
+        self.fitness = 0.0
         # NN layer parameters
         self.out_channels = 32
         self.in_channels = 32

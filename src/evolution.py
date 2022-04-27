@@ -17,7 +17,7 @@ def ea_loop(params, population):
 
     # experiment values to save
     for chromosome in population:
-        tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness.cpu().detach().numpy().item(0)}) 
+        tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness}) 
     dict['Init'] = tmp_results
 
     for generation in range(params.generations):
@@ -28,16 +28,19 @@ def ea_loop(params, population):
         population = crossover(population, params.pc, params.qc)
 
         population = compute_fitness(population, params)
-        
         # exp values to save for each generation
         tmp_results = []
         for chromosome in population:
-            tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness.cpu().detach().numpy().item(0)})
+            tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness})
             if chromosome.fitness.cpu().detach().numpy().item(0) >= best['acc']:
                 best["genotype"] = chromosome.genotype
-                best["acc"] = chromosome.fitness.cpu().detach().numpy().item(0)
+                best["acc"] = chromosome.fitness
         dict["Gen_"+str(generation)] =  tmp_results
         random.shuffle(population)
+        
+        if generation % 5 == 0:
+            with open(params.exp_path, 'w') as f:
+                json.dump(dict, f)
     # save best individual
     dict["best"] = {"genotype": best["genotype"], "fitness": best["acc"]}
         

@@ -100,7 +100,7 @@ def selection(population, params):
 
     # get fitness values
     for chromosome in population:
-        weights.append(chromosome.fitness.cpu())
+        weights.append(chromosome.fitness)
      
     weights = np.array(weights)
     lowest = np.argmin(weights)
