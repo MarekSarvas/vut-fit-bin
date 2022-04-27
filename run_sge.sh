@@ -29,10 +29,12 @@ crossover_p=0.2
 stages=3
 nodes="3_4_5"
 dataset="mnist"
+population_size=20
+generations=50
 
 
 exp_id=exp_stages${stages}_nodes${nodes}
-tag="exp_mut${mutation_p}_cross${crossover_p}"
+tag="pop_${population_size}_gen_${generations}_epochs_${epochs}_mut${mutation_p}_cross${crossover_p}"
 
 
 EXP_PATH=${MAIN_PATH}/exp/${dataset}/${exp_id}
@@ -59,8 +61,8 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
-    python3 evolution.py  --generations 50 \
-                        --population_size 20 \
+    python3 evolution.py  --generations ${generations} \
+                        --population_size ${population_size} \
                         --epochs ${epochs} \
                         --exp_path ${EXP_PATH}/${tag}.json \
                         --mut_p ${mutation_p} \
