@@ -7,6 +7,7 @@
 from parser import get_parser
 from operations import init_population, selection, mutation, crossover, compute_fitness
 import json
+import random
 
 
 def ea_loop(params, population):
@@ -36,7 +37,7 @@ def ea_loop(params, population):
                 best["genotype"] = chromosome.genotype
                 best["acc"] = chromosome.fitness.cpu().detach().numpy().item(0)
         dict["Gen_"+str(generation)] =  tmp_results
-
+        random.shuffle(population)
     # save best individual
     dict["best"] = {"genotype": best["genotype"], "fitness": best["acc"]}
         
