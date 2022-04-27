@@ -134,7 +134,7 @@ if __name__ == '__main__':
                 data["max"].append(np.max(tmp))
                 data["avg"].append(np.mean(tmp))
                 data["med"].append(np.median(tmp))
-
+            print(plot_path)
             # plot data
             eval_box(data, plot_path, params.dataset, title, params.verbose) 
             eval_table(data, plot_path, params.dataset)

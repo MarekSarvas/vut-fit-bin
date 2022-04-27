@@ -22,9 +22,13 @@ crossover_p=0.2
 stages=2
 nodes="4_5"
 dataset="mnist"
+population_size=
+generations=
+
+
 
 exp_id=exp_stages${stages}_nodes${nodes}
-tag="exp_mut${mutation_p}_cross${crossover_p}"
+tag="pop_${population_size}_gen_${generations}_epochs_${epochs}mut${mutation_p}_cross${crossover_p}"
 
 
 EXP_PATH=${MAIN_PATH}/exp/${exp_id}
