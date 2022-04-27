@@ -5,8 +5,8 @@
 #$ -q long.q@*
 #$ -l gpu=1,gpu_ram=8G,ram_free=8G,mem_free=8G
 
-#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp.log
-#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp.err
+#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp_fashion.log
+#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp_fashion.err
 
 cd /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin
 
@@ -23,12 +23,12 @@ verbose=0
 
 baseline=cnn
 
-epochs=5
+epochs=10
 mutation_p=0.8
 crossover_p=0.2
 stages=3
-nodes="3_4_5"
-dataset="mnist"
+nodes="5_5_5"
+dataset="fashion"
 
 
 exp_id=exp_stages${stages}_nodes${nodes}
@@ -59,7 +59,7 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
-    python3 evolution.py  --generations 50 \
+    python3 evolution.py  --generations 30 \
                         --population_size 20 \
                         --epochs ${epochs} \
                         --exp_path ${EXP_PATH}/${tag}.json \

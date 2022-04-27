@@ -24,10 +24,10 @@ verbose=0
 baseline=cnn
 
 epochs=30
-mutation_p=0.05
+mutation_p=0.8
 crossover_p=0.2
-stages=2
-nodes="4_5"
+stages=3
+nodes="3_4_5"
 dataset="cifar10"
 
 
@@ -59,8 +59,8 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
-    python3 evolution.py  --generations 20 \
-                        --population_size 10 \
+    python3 evolution.py  --generations 50 \
+                        --population_size 20 \
                         --epochs ${epochs} \
                         --exp_path ${EXP_PATH}/${tag}.json \
                         --mut_p ${mutation_p} \

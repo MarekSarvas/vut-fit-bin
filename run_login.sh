@@ -1,15 +1,13 @@
 #!/usr/bin/bash
-
-
+# Bash template for running dataprep and training the model
 #$ -N run 
 #$ -q long.q@*
-#$ -l gpu=1,gpu_ram=8G,ram_free=8G,mem_free=8G
+#$ -l gpu=1,gpu_ram=8G,ram_free=16G,mem_free=16G
 
-#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp.log
-#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp.err
+#$ -o /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp1_not_training.log
+#$ -e /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/exp/exp1_not_training.err
 
 cd /mnt/matylda4/xsarva00/fit_bin/vut-fit-bin
-
 . ./path.sh || exit 1;
 
 MAIN_PATH=$(pwd)
@@ -22,20 +20,11 @@ dumpdir=dump
 verbose=0
 
 baseline=cnn
+epochs=10
+exp_id='exp1_test'
+tag='exp1_test'
 
-epochs=5
-mutation_p=0.8
-crossover_p=0.2
-stages=3
-nodes="3_4_5"
-dataset="mnist"
-
-
-exp_id=exp_stages${stages}_nodes${nodes}
-tag="exp_mut${mutation_p}_cross${crossover_p}"
-
-
-EXP_PATH=${MAIN_PATH}/exp/${dataset}/${exp_id}
+EXP_PATH=${MAIN_PATH}/exp/${exp_id}
 
 mkdir -pv ${EXP_PATH}
 
@@ -59,16 +48,15 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
-    python3 evolution.py  --generations 50 \
-                        --population_size 20 \
-                        --epochs ${epochs} \
-                        --exp_path ${EXP_PATH}/${tag}.json \
-                        --mut_p ${mutation_p} \
-                        --cross_p ${crossover_p} \
-                        --cnn_stages ${stages} \
-                        --cnn_nodes ${nodes} \
+    python3 evolution.py  --generations 20 \
+                        --population_size 10 \
+                        --epochs 4 \
+                        --exp_path ${EXP_PATH}/${tag} \
+                        --mut_p 0.8 \
+                        --cross_p 0.2 \
+                        --cnn_stages 2 \
+                        --cnn_nodes "4,5" \
                         --gpu 1 \
-                        --dataset ${dataset} \
                         --verbose True \
                 #        > ${EXP_PATH}/${tag}.log 
 fi
