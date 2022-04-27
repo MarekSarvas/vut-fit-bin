@@ -33,7 +33,7 @@ def eval_table(data, path, dataset):
     path = path.replace(".pdf", ".tex")
     
     # create dataframe and add generations as column
-    df = pd.DataFrame({"min \%": data["min"], "Max \%": data["max"], "Avg \%": data["avg"], "Med \%": data["med"]})
+    df = pd.DataFrame({"min \%": data["min"], "Max \%": data["max"], "Avg \%": data["avg"], "Med \%": data["med"], "Genotype": data["genotype"]})
     df = df.rename_axis('Gen').reset_index()
     
     # style table
@@ -56,6 +56,42 @@ def eval_table(data, path, dataset):
     # save as .tex file
     with open(path, "w") as f:
         f.write(tex_content)
+
+def gen2str(genotype):
+    result = ""
+    for stage in genotype:
+        for connection in stage:
+            result += str(connection) + "-"
+        #result = result[:-1]
+        result = " $\\vert$ ".join(result.rsplit("-", 1))
+    return result[:-9]
+
+def check_for_connection(stage):
+    for node_c in stage:
+        if '1' in node_c: return True
+    return False
+
+
+def conv_mult(genotype, dataset):
+    d = {"fashion": 28, "mnist": 28, "cifar10": 32}
+    stage_channels = 32
+    mult = 0
+
+    for i, s in enumerate(genotype):
+        if i == 0:
+            mult += d[dataset]**2 * 25 * 1
+        else:
+            mult += (d[dataset]/2*i)**2 * 25 * stage_channels
+        if not check_for_connection(s):
+            continue
+        for v in s:
+            for bit in v:
+                if bit == '1':
+                    mult += (d[dataset]/2*i)**2 * 9 * stage_channels
+        stage_channels *= 2
+        mult += (d[dataset]/2*i)**2 * 9 * stage_channels
+        stage_channels *= 2
+    return mult
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -82,15 +118,17 @@ if __name__ == '__main__':
             # for each generation gather data
             for i, item in enumerate(json_data.items()):
                 # not dictionary -> skip
+                best = ""
                 if item[0] == "best":
+                    best = gen2str(item[1]["genotype"])
                     continue
                 data["generation"] = np.append(data["generation"], str(i))
                 tmp = []
                 for c in item[1]:
                     tmp.append(c['fitness'])
-
+                 
                 # store genotype with highest fitness in current generation
-                data["genotype"] = np.append(data["genotype"], item[1][np.argmax(tmp)]["genotype"])
+                data["genotype"] = np.append(data["genotype"], gen2str(item[1][np.argmax(tmp)]["genotype"]))
                 data["fitness"].append(np.array(tmp))
                 data["min"].append(np.min(tmp))
                 data["max"].append(np.max(tmp))
