@@ -32,7 +32,7 @@ def ea_loop(params, population):
         tmp_results = []
         for chromosome in population:
             tmp_results.append({"genotype": chromosome.genotype, "fitness": chromosome.fitness})
-            if chromosome.fitness.cpu().detach().numpy().item(0) >= best['acc']:
+            if chromosome.fitness >= best['acc']:
                 best["genotype"] = chromosome.genotype
                 best["acc"] = chromosome.fitness
         dict["Gen_"+str(generation)] =  tmp_results
