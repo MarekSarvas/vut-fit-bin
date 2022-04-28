@@ -12,24 +12,24 @@ if [ $# -eq 2 ]; then
     stage=$1
     stop_stage=$2
 fi
+
 dumpdir=dump
 verbose=0
 baseline=cnn
-
 epochs=3
-mutation_p=0.05
-crossover_p=0.2
+p_m=0.8
+q_m=0.1
+p_c=0.2
+q_c=0.3
 stages=2
 nodes="4_5"
 dataset="mnist"
-population_size=
-generations=
-
+population_size=10
+generations=10
 
 
 exp_id=exp_stages${stages}_nodes${nodes}
-tag="pop_${population_size}_gen_${generations}_epochs_${epochs}mut${mutation_p}_cross${crossover_p}"
-
+tag="pop_${population_size}_gen_${generations}_epochs_${epochs}_pm${p_m}_qm${q_m}_pc${p_c}_qc${q_c}"
 
 EXP_PATH=${MAIN_PATH}/exp/${exp_id}
 
@@ -56,12 +56,14 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
-    python3 evolution.py  --generations 2 \
-                        --population_size 5 \
+    python3 evolution.py  --generations ${generations} \
+                        --population_size ${population_size} \
                         --epochs ${epochs} \
                         --exp_path ${EXP_PATH}/${tag}.json \
-                        --mut_p ${mutation_p} \
-                        --cross_p ${crossover_p} \
+                        --pm ${p_m} \
+                        --qm ${q_m} \
+                        --pc ${p_c} \
+                        --qc ${q_c} \
                         --cnn_stages ${stages} \
                         --cnn_nodes ${nodes} \
                         --gpu 1 \
@@ -74,7 +76,7 @@ if [ ${stage} -le 3 ] &&[ ${stop_stage} -ge 3 ]; then
     echo "stage 3: Generate plots"
     for set in mnist cifar10 fashion; do
         mkdir -pv ${MAIN_PATH}/plots/${set}
-        python3 eval_exp.py --exp_root ${MAIN_PATH}/exp/${set} \
+        python3 eval_exp.py --exp_root ${MAIN_PATH}/exp_old/${set} \
                             --dataset ${set}
     done
 fi

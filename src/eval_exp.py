@@ -31,7 +31,7 @@ def eval_box(data, path, dataset, title, verbose):
 
 def eval_table(data, path, dataset):
     path = path.replace(".pdf", ".tex")
-    
+    number_of_layers(data["genotype"])
     # create dataframe and add generations as column
     df = pd.DataFrame({"min \%": data["min"], "Max \%": data["max"], "Avg \%": data["avg"], "Med \%": data["med"], "Genotype": data["genotype"]})
     df = df.rename_axis('Gen').reset_index()
@@ -93,6 +93,27 @@ def conv_mult(genotype, dataset):
         stage_channels *= 2
     return mult
 
+def number_of_layers(data):
+    nums = []
+    for genotype in data:
+        num = 0
+        for s in genotype:
+            breakpoint()
+            s_conv = np.zeros(len(s)+1)
+            print(s_conv)
+            if not check_for_connection(s):  
+                num += 1
+                continue 
+            else:
+                for v in s:
+                    for i, bit in enumerate(v):
+                        if bit == '1':
+                            pass
+            num += 1
+        nums.append(num)
+    return nums
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", type=str, default="mnist")
@@ -100,10 +121,8 @@ if __name__ == '__main__':
     parser.add_argument("--verbose", action='store_true')
     parser.set_defaults(verbose=False)
     params = parser.parse_args()
-    
     for path, subdirs, files in os.walk(params.exp_root):
         for name in files:
-
             json_path = os.path.join(path, name)
             plot_path = "_".join(os.path.join(path, name).replace("/exp/", "/plots/").rsplit("/", 1)).replace(".json", ".pdf")
 

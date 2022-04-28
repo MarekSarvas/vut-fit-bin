@@ -23,7 +23,7 @@ verbose=0
 
 baseline=cnn
 
-epochs=3
+epochs=5
 p_m=0.8
 q_m=0.1
 p_c=0.2
