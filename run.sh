@@ -76,7 +76,7 @@ if [ ${stage} -le 3 ] &&[ ${stop_stage} -ge 3 ]; then
     echo "stage 3: Generate plots"
     for set in mnist cifar10 fashion; do
         mkdir -pv ${MAIN_PATH}/plots/${set}
-        python3 eval_exp.py --exp_root ${MAIN_PATH}/exp_old/${set} \
+        python3 eval_exp.py --exp_root ${MAIN_PATH}/exp/${set} \
                             --dataset ${set}
     done
 fi

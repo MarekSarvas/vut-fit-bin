@@ -102,8 +102,8 @@ if __name__ == '__main__':
         device = torch.device('cuda')
     else:
         device  = torch.device('cpu')
-    data="cifar10"
-    net = Chromosome(stages=3, nodes=[3, 4,5], genotype=[['1', '00'], ['0', '01', '000'], ['0', '00', '000', '0000']], dataset=data)
+    data="mnist"
+    net = Chromosome(stages=3, nodes=[3, 4,5], genotype=[['1', '11'], ['1', '01', '010'], ['1', '10', '010', '0110']], dataset=data)
     #net = Chromosome(stages=3, nodes=[3, 4, 5], genotype=[['1', '00'], ['0', '11', '010'], ['0', '01', '000', '0101']], dataset=data)
     #net = Chromosome(stages=2, nodes=[4, 5], genotype=[['1', '00', '000'], ['0', '11', '101', '0000']])
     #net = Chromosome(stages=3, nodes=[4, 5], genotype=[['1', '11', '110'], ['1', '10', '101', '1011']], dataset=data)
@@ -111,7 +111,9 @@ if __name__ == '__main__':
         net.cuda()
     #for a in net.children():
         #print(a)
-    trained = train(30, net, cuda, data)
+    trained = train(2, net, cuda, data)
+    eval(trained, cuda, data)
+    trained.reset_w()
     eval(trained, cuda, data)
 
 

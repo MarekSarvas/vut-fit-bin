@@ -130,3 +130,7 @@ def compute_fitness(population, params):
         chromosome.fitness = acc
     return population
 
+def reset_weights(population):
+    for chromosome in population:
+        chromosome.reset_w()
+    return population

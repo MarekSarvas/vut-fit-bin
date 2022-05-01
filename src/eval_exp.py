@@ -13,7 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def eval_box(data, path, dataset, title, verbose):
-    fig1, ax = plt.subplots(figsize=(10,6))
+    fig1, ax = plt.subplots(figsize=(8,8))
     ax.set_title(title + " on " + dataset.upper())
 
     box = ax.boxplot(data["fitness"], labels=data["generation"], showfliers=False, patch_artist=True)
@@ -98,9 +98,8 @@ def number_of_layers(data):
     for genotype in data:
         num = 0
         for s in genotype:
-            breakpoint()
             s_conv = np.zeros(len(s)+1)
-            print(s_conv)
+
             if not check_for_connection(s):  
                 num += 1
                 continue 
@@ -130,7 +129,7 @@ if __name__ == '__main__':
             
             # store data for plotting
             data = {"generation": np.array([], dtype=object), "fitness": [], "genotype": np.array([], dtype=object), "avg": [], "min": [], "max": [], "med": []}
-
+            
             with open(json_path) as f:
                 json_data = json.load(f)
            
@@ -147,13 +146,14 @@ if __name__ == '__main__':
                     tmp.append(c['fitness'])
                  
                 # store genotype with highest fitness in current generation
+                data["# conv layers"]  = item[1][np.argmax(tmp)]["genotype"]
                 data["genotype"] = np.append(data["genotype"], gen2str(item[1][np.argmax(tmp)]["genotype"]))
                 data["fitness"].append(np.array(tmp))
                 data["min"].append(np.min(tmp))
                 data["max"].append(np.max(tmp))
                 data["avg"].append(np.mean(tmp))
                 data["med"].append(np.median(tmp))
-            print(plot_path)
+            
             # plot data
             eval_box(data, plot_path, params.dataset, title, params.verbose) 
             eval_table(data, plot_path, params.dataset)

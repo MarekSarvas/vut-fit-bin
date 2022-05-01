@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/src/evolution.py", line 60, in <module>
+    gpu_owner = safe_gpu.GPUOwner()
+  File "/mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/env-bin/lib/python3.9/site-packages/safe_gpu/safe_gpu.py", line 129, in __init__
+    raise RuntimeError(f"Required {nb_gpus} GPUs, only found these free: {free_gpus}. Somebody didn't properly declare their resources?")
+RuntimeError: Required 1 GPUs, only found these free: []. Somebody didn't properly declare their resources?
+Traceback (most recent call last):
+  File "/mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/src/evolution.py", line 60, in <module>
+    gpu_owner = safe_gpu.GPUOwner()
+  File "/mnt/matylda4/xsarva00/fit_bin/vut-fit-bin/env-bin/lib/python3.9/site-packages/safe_gpu/safe_gpu.py", line 129, in __init__
+    raise RuntimeError(f"Required {nb_gpus} GPUs, only found these free: {free_gpus}. Somebody didn't properly declare their resources?")
+RuntimeError: Required 1 GPUs, only found these free: []. Somebody didn't properly declare their resources?

@@ -11,10 +11,11 @@ from torch.utils.data import DataLoader
 from torch import optim
 
 from models.baseModelCNN import basenet
-from models.baseModelLin import linearnet
+from models.baseModelCNN2 import basenet2
+from train_eval_ea import train, eval
 
 
-def train(epochs, model, cuda):
+def train_base(epochs, model, cuda):
     # load data + create dataloader used in training for retrieving batches 
     train = datasets.MNIST(root='../data', train=True, download=True, transform=torchvision.transforms.ToTensor())
     loader = DataLoader(train, batch_size=2048, shuffle=True)
@@ -51,7 +52,7 @@ def train(epochs, model, cuda):
     return model
 
 
-def eval(model, cuda):
+def eval_base(model, cuda):
     # load data + create dataloader used in evaluating for retrieving batches 
     test = datasets.MNIST(root='../data', train=False, download=True, transform=torchvision.transforms.ToTensor())
     loader = DataLoader(test, batch_size=128, shuffle=True)
@@ -85,11 +86,14 @@ if __name__ == '__main__':
     else:
         device  = torch.device('cpu')
     net1 = basenet(device, pretrained=False, num_classes=10)
-    net2 = linearnet(device, pretrained=False, num_classes=10)
+    net2 = basenet2(device, pretrained=False, num_classes=10)
     if cuda:
         net1.cuda()
         net2.cuda()
-    trained = train(3, net2, cuda)
-    eval(trained, cuda)
+    dataset = "mnist"
+    trained = train(20, net1, cuda, dataset)
+    eval(trained, cuda, dataset)
+    #trained = train(20, net2, cuda, dataset)
+    #eval(trained, cuda, dataset)
 
 

@@ -50,6 +50,10 @@ class Chromosome(nn.Module):
                 nn.Linear(self.flat_feat, num_classes)
         )
     
+    def reset_w(self):
+        torch.nn.init.xavier_uniform_(self.fin_linear[1].weight.data)
+        for stage in self.cnn_stages:
+            stage.reset_w()
 
     def create_cnn_stages(self):
         """ Create structure containing K nodes that will be connected
@@ -93,6 +97,8 @@ class MyConv2d(nn.Module):
         self.has_output_connection = False # output is used, if False output is used as part of an input into last default conv layer in current stage
         self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding)
 
+    def reset_w(self):
+        torch.nn.init.xavier_uniform_(self.conv.weight.data)
     def forward(self,x):
         return self.conv(x)
 
@@ -114,6 +120,12 @@ class Stage(nn.Module):
         self.def_output_node = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=1)
         self.b_norm = nn.BatchNorm2d(out_channels)
     
+    def reset_w(self):
+        for conv in self.nodes:
+            conv.reset_w()
+        torch.nn.init.xavier_uniform_(self.def_input_node.weight.data)
+        torch.nn.init.xavier_uniform_(self.def_output_node.weight.data)
+
     def forward(self, x):
         x = self.def_input_node(x)
 
