@@ -32,7 +32,7 @@ stages=3
 nodes="3_4_5"
 dataset="mnist"
 population_size=20
-generations=30
+generations=20
 
 
 exp_id=exp_stages${stages}_nodes${nodes}
