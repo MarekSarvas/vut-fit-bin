@@ -5,7 +5,7 @@
 # Module: Implementation of EA loop with initialization of population.
 
 from parser import get_parser
-from operations import init_population, selection, mutation, crossover, compute_fitness, reset_weights
+from operations import init_population, selection, mutation, crossover, compute_fitness, create_population
 import json
 import random
 
@@ -22,11 +22,12 @@ def ea_loop(params, population):
 
     for generation in range(params.generations):
         print("Generation: ", generation)
-        
         population = selection(population, params)
+        random.shuffle(population)
+        population = create_population(population, params)
         population = mutation(population, params.pm, params.qm)
         population = crossover(population, params.pc, params.qc)
-        population = reset_weights(population)
+        
         population = compute_fitness(population, params)
         # exp values to save for each generation
         tmp_results = []
@@ -36,7 +37,7 @@ def ea_loop(params, population):
                 best["genotype"] = chromosome.genotype
                 best["acc"] = chromosome.fitness.item()
         dict["Gen_"+str(generation)] =  tmp_results
-        random.shuffle(population)
+        
          
         dict["best"] = {"genotype": best["genotype"], "fitness": best["acc"]}
         if generation % 5 == 4:

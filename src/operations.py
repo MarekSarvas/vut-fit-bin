@@ -25,6 +25,16 @@ def init_population(params):
         population.append(tmp)
     return population 
 
+def create_population(population, params):
+    print("Creating new population")
+    new_population = []
+    for chromosome in population:
+        new_genotype = chromosome.genotype
+        tmp = Chromosome(params.cnn_stages, list(map(int, params.cnn_nodes.split("_"))), new_genotype, dataset=params.dataset)
+        if params.gpu == 1:
+            tmp = tmp.cuda()
+        new_population.append(tmp)
+    return new_population 
 
 def create_genotype(params):
     gen = []
