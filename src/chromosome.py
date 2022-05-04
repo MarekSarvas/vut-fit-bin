@@ -162,7 +162,9 @@ class Stage(nn.Module):
             if not self.nodes[i].has_output_connection and self.nodes[i].has_input_connection:
                 tmp_outputs[-1] += tmp_outputs[i] 
 
-        x = self.def_output_node(tmp_outputs[-1])
+        #x = self.def_output_node(tmp_outputs[-1])
+        x = tmp_outputs[-1]
+
         return self.b_norm(x)
 
     def check_for_connection(self):
