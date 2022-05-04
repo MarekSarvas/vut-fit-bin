@@ -6,8 +6,8 @@ MAIN_PATH=$(pwd)
 
 cd src/
 
-stage=3
-stop_stage=3
+stage=4
+stop_stage=4
 if [ $# -eq 2 ]; then
     stage=$1
     stop_stage=$2
@@ -79,4 +79,13 @@ if [ ${stage} -le 3 ] &&[ ${stop_stage} -ge 3 ]; then
         python3 eval_exp.py --exp_root ${MAIN_PATH}/exp/${set} \
                             --dataset ${set}
     done
+fi
+if [ ${stage} -le 4 ] &&[ ${stop_stage} -ge 4 ]; then
+    echo "stage 4: Generate MAC plots"
+    mkdir -pv ${MAIN_PATH}/plots/${set}
+    exp_set=exp/fashion/exp_stages2_nodes3_3
+
+    python3 compute_MACs.py --path1 ${MAIN_PATH}/${exp_set}/pop_50_gen_50_epochs_2_pm0.8_qm0.1_pc0.5_qc0.3.json \
+                            --path2 ${MAIN_PATH}/${exp_set}/pop_5_gen_50_epochs_2_pm0.8_qm0.1_pc0.2_qc0.3.json \
+                            --verbose
 fi
