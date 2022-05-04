@@ -6,8 +6,8 @@ MAIN_PATH=$(pwd)
 
 cd src/
 
-stage=4
-stop_stage=4
+stage=3
+stop_stage=3
 if [ $# -eq 2 ]; then
     stage=$1
     stop_stage=$2
@@ -33,7 +33,6 @@ tag="pop_${population_size}_gen_${generations}_epochs_${epochs}_pm${p_m}_qm${q_m
 
 EXP_PATH=${MAIN_PATH}/exp/${exp_id}
 
-mkdir -pv ${EXP_PATH}
 
 if [ ${stage} -le 0 ] &&[ ${stop_stage} -ge 0 ]; then
     echo "stage 0: Data Preparation"
@@ -56,6 +55,7 @@ fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then
     echo "stage 2: Neuroevolution"
+    mkdir -pv ${EXP_PATH}
     python3 evolution.py  --generations ${generations} \
                         --population_size ${population_size} \
                         --epochs ${epochs} \
@@ -85,7 +85,7 @@ if [ ${stage} -le 4 ] &&[ ${stop_stage} -ge 4 ]; then
     mkdir -pv ${MAIN_PATH}/plots/${set}
     exp_set=exp/fashion/exp_stages2_nodes3_3
 
-    python3 compute_MACs.py --path1 ${MAIN_PATH}/${exp_set}/pop_50_gen_50_epochs_2_pm0.8_qm0.1_pc0.5_qc0.3.json \
+    python3 compute_MACs.py --path1 ${MAIN_PATH}/${exp_set}/pop_30_gen_50_epochs_2_pm0.8_qm0.1_pc0.8_qc0.4.json \
                             --path2 ${MAIN_PATH}/${exp_set}/pop_5_gen_50_epochs_2_pm0.8_qm0.1_pc0.2_qc0.3.json \
                             --verbose
 fi

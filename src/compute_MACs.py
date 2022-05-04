@@ -111,7 +111,9 @@ def MACs_last_gen(data, labels):
     
     df = pd.DataFrame({"MACs": MACs, "Exp": exp, "Acc": acc})
     print(df)
-    sns.scatterplot(x="MACs", y="Acc", data=df, hue="Exp")
+    ax = sns.scatterplot(y="MACs", x="Acc", data=df, hue="Exp")
+    ax.set(xscale="log", yscale="log")
+
     plt.show()
 
 def MAC_from_genotype(genotype):
@@ -156,13 +158,12 @@ if __name__ == '__main__':
 
     with open(params.path2) as f:
         json_data2 = json.load(f)
-    print()
     if last:
         data = []
         for exp in [json_data1, json_data2]:
             generation = list(exp.keys())[-1]
             data.append(exp[generation])
-        MACs_last_gen(data, [params.path1.split("/")[-1].split("_")[1], params.path2.split("/")[-1].split("_")[1]])
+            MACs_last_gen(data, [params.path1.split("/")[-1].split("_")[1], params.path2.split("/")[-1].split("_")[1]])
     else:
         data = []
         for exp in [json_data1, json_data2]:

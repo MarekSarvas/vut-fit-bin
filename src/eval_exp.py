@@ -8,6 +8,7 @@ import os
 import re
 import json
 import argparse
+from tkinter import W
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -28,6 +29,12 @@ def eval_box(data, path, dataset, title, verbose):
     plt.savefig(path, format="pdf")
     if verbose: plt.show()
 
+def eval_med_mean(data, path, dataset):
+    fig1, ax = plt.subplots(figsize=(8,8))
+    ax.set_title(title + " on " + dataset.upper())
+    ax.plot(data["med"])
+    ax.plot(data["max"])
+    plt.show()
 
 def eval_table(data, path, dataset):
     path = path.replace(".pdf", ".tex")
@@ -155,5 +162,6 @@ if __name__ == '__main__':
                 data["med"].append(np.median(tmp))
             
             # plot data
-            eval_box(data, plot_path, params.dataset, title, params.verbose) 
-            eval_table(data, plot_path, params.dataset)
+            #eval_box(data, plot_path, params.dataset, title, params.verbose) 
+            #eval_table(data, plot_path, params.dataset)
+            eval_med_mean(data, plot_path, params.dataset)
