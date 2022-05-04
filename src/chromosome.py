@@ -20,8 +20,8 @@ class Chromosome(nn.Module):
         self.K = nodes  # list of numbers of convolution layers in each stage
         self.fitness = 0.0
         # NN layer parameters
-        self.out_channels = 32
-        self.in_channels = 32
+        self.out_channels = 16
+        self.in_channels = 16
         if dataset == "cifar10":
             self.init_in_channels = 3
             self.input_size = 32 
@@ -33,7 +33,7 @@ class Chromosome(nn.Module):
             self.init_in_channels = 1
             self.input_size = 28 
             if stages == 2:
-                self.flat_feat = 3136 
+                self.flat_feat = 1568
             else:
                 self.flat_feat = 1152
         self.default_kernel_size = 5

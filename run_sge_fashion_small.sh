@@ -26,12 +26,12 @@ baseline=cnn
 epochs=2
 p_m=0.8
 q_m=0.1
-p_c=0.5
+p_c=0.2
 q_c=0.3
 stages=2
 nodes="3_3"
 dataset="fashion"
-population_size=50
+population_size=5
 generations=50
 
 
