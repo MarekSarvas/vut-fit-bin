@@ -1,6 +1,9 @@
 
 all:
-	bash run.sh
+	bash run.sh 2 2
+
+plots:
+	bash run.sh 3 3
 
 dataset:
 	bash run.sh 0 0 
