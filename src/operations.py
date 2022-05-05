@@ -117,7 +117,7 @@ def selection(population, params):
     weights[lowest] = 0  # prevents NaN
 
     # r_n - r_0 than make probability sum to 1
-    #weights = (weights - lowest) + 0.00001 
+    weights = (weights - lowest) + 0.00001 
     weights = weights / np.sum(weights)
 
     if params.verbose: print("Selection ================================")

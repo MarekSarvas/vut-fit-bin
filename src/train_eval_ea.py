@@ -56,7 +56,7 @@ def train(epochs, model, cuda, dataset="mnist"):
             y = torch.argmax(y, dim=1)
             correct += torch.sum(y == labels)
             total += len(y)
-        print('Epoch: {}, Accuracy: {:.5f}'.format(epoch, correct/total)) 
+        #print('Epoch: {}, Accuracy: {:.5f}'.format(epoch, correct/total)) 
     return model
 
 
