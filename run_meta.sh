@@ -24,15 +24,16 @@ exp_id=exp_stages${stages}_nodes${nodes}
 tag="pop_${population_size}_gen_${generations}_epochs_${epochs}_pm${p_m}_qm${q_m}_pc${p_c}_qc${q_c}"
 
 
-EXP_PATH=../exp_meta/${dataset}/${exp_id}
+EXP_PATH=${BASE}/vut-fit-bin/exp_meta/${dataset}/${exp_id}
 
 
 
 mkdir -pv ${EXP_PATH}
+cd src/
 
 if [ ${stage} -le 0 ] &&[ ${stop_stage} -ge 0 ]; then
     echo "stage 0: Data Preparation"
-    python download_data.py
+    python download_data.py --data_path ../data
 fi
 
 if [ ${stage} -le 2 ] &&[ ${stop_stage} -ge 2 ]; then

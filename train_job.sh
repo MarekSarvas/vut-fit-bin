@@ -7,7 +7,7 @@
 
 
 # define BASE TODO: alter..
-export BASE=/storage/brno2/home/xsarva00/
+export BASE=/storage/brno2/home/xsarva00
 
 # append a line to a file "jobs_info.txt" containing the ID of the job, the hostname of node it is run on and the path to a scratch directory
 # this information helps to find a scratch directory in case the job fails and you need to remove the scratch directory manually     
@@ -26,7 +26,7 @@ module add conda-modules-py37
 conda activate torch_env || {    
   conda create -n torch_env python=3.7;    
   conda activate torch_env;    
-  conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch;
+  conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch;
   conda install scipy;    
   conda install -c conda-forge matplotlib;
 }
@@ -37,7 +37,7 @@ cd $SCRATCHDIR
 
 # copy the repository..
 cp -r $BASE/vut-fit-bin .
-cd vut-fit-bin
+cd vut-fit-bin/
 mkdir data     
 
 # run the training..
