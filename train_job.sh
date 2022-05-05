@@ -31,7 +31,6 @@ conda activate torch_env || {
   conda install -c conda-forge matplotlib;
 }
 
-mkdir $SCRATCHDIR/data     
     
 # move into scratch directory
 cd $SCRATCHDIR
@@ -39,6 +38,7 @@ cd $SCRATCHDIR
 # copy the repository..
 cp -r $BASE/vut-fit-bin .
 cd vut-fit-bin
+mkdir data     
 
 # run the training..
 bash run_meta.sh
