@@ -26,9 +26,9 @@ class Chromosome(nn.Module):
             self.init_in_channels = 3
             self.input_size = 32 
             if stages == 2:
-                self.flat_feat = 4096 
+                self.flat_feat = 2048
             else:
-                self.flat_feat = 2048 
+                self.flat_feat = 1024
         else:
             self.init_in_channels = 1
             self.input_size = 28 
