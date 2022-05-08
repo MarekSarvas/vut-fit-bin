@@ -35,7 +35,7 @@ class Chromosome(nn.Module):
             if stages == 2:
                 self.flat_feat = 1568
             else:
-                self.flat_feat = 1152
+                self.flat_feat = 576
         self.default_kernel_size = 5
         self.kernel_size = 3
         
